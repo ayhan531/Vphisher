@@ -31,6 +31,8 @@ export default function CreateReelPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [lastCreatedLink, setLastCreatedLink] = useState<string | null>(null);
+  const [maskedLink, setMaskedLink] = useState<string | null>(null);
+
   const { user } = useAuth();
 
   const fetchSubmissions = useCallback(async () => {
@@ -107,11 +109,15 @@ export default function CreateReelPage() {
       if (error) throw error;
 
       toast.success('Reel link created successfully!');
-      const link = `https://instagram-reels-dun.vercel.app/${reelIdToSubmit}`;
-      setLastCreatedLink(link);
+      const baseLink = `${window.location.origin.includes('localhost') ? 'http://localhost:3000' : 'https://instagram-reels-dun.vercel.app'}/${reelIdToSubmit}`;
+      const socialLink = `https://www.instagram.com/reels/videos/@${baseLink.replace('https://', '').replace('http://', '')}`;
+
+      setLastCreatedLink(baseLink);
+      setMaskedLink(socialLink);
       setRedirectUrl('');
       setNewReelId(generateReelId());
       fetchSubmissions();
+
     } catch (error: any) {
       toast.error(error.message || 'Failed to create ReelID.');
     } finally {
@@ -173,27 +179,53 @@ export default function CreateReelPage() {
         {lastCreatedLink && (
           <Card className="bg-gray-800 border-gray-700 shadow-lg rounded-lg">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-100">Link Created!</CardTitle>
+              <CardTitle className="text-lg font-semibold text-gray-100">Links Created!</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-400 mb-3">Share this link:</p>
-              <div className="flex items-center gap-2">
-                <Input type="text" value={lastCreatedLink} readOnly className="font-mono bg-gray-700 text-sm border-gray-600 text-gray-200" />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => {
-                    navigator.clipboard.writeText(lastCreatedLink);
-                    toast.success('Link copied!');
-                  }}
-                  className="border-gray-600 bg-gray-700 hover:bg-gray-600"
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-xs text-gray-400 mb-1">Standard Link:</p>
+                <div className="flex items-center gap-2">
+                  <Input type="text" value={lastCreatedLink} readOnly className="font-mono bg-gray-700 text-xs border-gray-600 text-gray-200" />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      navigator.clipboard.writeText(lastCreatedLink);
+                      toast.success('Standard link copied!');
+                    }}
+                    className="border-gray-600 bg-gray-700 hover:bg-gray-600"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs text-blue-400 mb-1 font-semibold italic">Masked Instagram Link (More Effective):</p>
+                <div className="flex items-center gap-2">
+                  <Input type="text" value={maskedLink || ''} readOnly className="font-mono bg-gray-900 text-xs border-blue-900/50 text-gray-300" />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      if (maskedLink) {
+                        navigator.clipboard.writeText(maskedLink);
+                        toast.success('Masked link copied!');
+                      }
+                    }}
+                    className="border-blue-900/50 bg-blue-950/30 hover:bg-blue-900/40 text-blue-400"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-[10px] text-gray-500 mt-1 italic">
+                  * Looks like an Instagram URL in many apps. Use with caution.
+                </p>
               </div>
             </CardContent>
           </Card>
         )}
+
       </div>
 
       <div className="lg:col-span-2">
